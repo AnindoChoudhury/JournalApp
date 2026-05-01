@@ -1,6 +1,8 @@
 package com.anindo.journalapp.controllers;
 
 import com.anindo.journalapp.entity.JournalEntry;
+import com.anindo.journalapp.service.JournalEntryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -10,35 +12,34 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/journal")
-public class JournalEntryController {
+public class JournalEntryControllerV2 {
 
-    Map<Long, JournalEntry> journalEntries = new HashMap<>();
+    @Autowired
+    private JournalEntryService journalEntryService;
 
     @GetMapping
     public List<JournalEntry> getAll(){
-        return new ArrayList<>(journalEntries.values());
+        return null;
     }
 
     @PostMapping
-    public boolean postJournalEntry(@RequestBody JournalEntry journalEntry){
-        long id = journalEntry.getId();
-        journalEntries.put(id,journalEntry);
-        return true;
+    public void postJournalEntry(@RequestBody JournalEntry journalEntry){
+          journalEntryService.saveEntry(journalEntry);
     }
 
     @GetMapping("/id/{id}")
     public JournalEntry getById(@PathVariable Long id){
-        return journalEntries.get(id);
+        return null;
     }
 
     @DeleteMapping("/id/{id}")
     public void deleteById(@PathVariable Long id){
-        journalEntries.remove(id);
+
     }
 
     @PutMapping("/id/{id}")
     public void putById(@PathVariable Long id,@RequestBody JournalEntry journalEntry){
-        journalEntries.put(id,journalEntry);
+
     }
 
 
