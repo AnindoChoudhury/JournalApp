@@ -1,50 +1,24 @@
 package com.anindo.journalapp.entity;
 
 
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 
 @Document(collection = "journal_entries")
+@Getter
+@Setter
 public class JournalEntry {
     @Id
-    private String id;
-    private String title, content;
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    private Date date;
-
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    private ObjectId id;
+    @NonNull
+    private String title;
+    private String content;
+    private LocalDateTime date;
 }
