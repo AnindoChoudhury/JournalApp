@@ -31,6 +31,7 @@ public class JournalEntryService {
          }
          catch(Exception e){
              System.out.println(e);
+             throw new RuntimeException();
          }
      }
 
