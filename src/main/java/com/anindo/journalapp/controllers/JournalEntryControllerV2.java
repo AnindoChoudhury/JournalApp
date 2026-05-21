@@ -1,7 +1,9 @@
 package com.anindo.journalapp.controllers;
 
 import com.anindo.journalapp.entity.JournalEntry;
+import com.anindo.journalapp.entity.User;
 import com.anindo.journalapp.service.JournalEntryService;
+import com.anindo.journalapp.service.UserService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,8 @@ public class JournalEntryControllerV2 {
 
     @Autowired
     private JournalEntryService journalEntryService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping
     public ResponseEntity<List<JournalEntry>> getAll(){
@@ -29,7 +33,6 @@ public class JournalEntryControllerV2 {
     }
 
     @GetMapping("/id/{id}")
-
     public ResponseEntity<?> getById(@PathVariable ObjectId id){
         Optional<JournalEntry> journalEntry = journalEntryService.findById(id); // box containing the document
         if(journalEntry.isPresent()){
@@ -38,10 +41,10 @@ public class JournalEntryControllerV2 {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping
-    public ResponseEntity<?> postJournalEntry(@RequestBody JournalEntry journalEntry){
+    @PostMapping("{username}")
+    public ResponseEntity<?> postJournalEntry(@RequestBody JournalEntry journalEntry, @PathVariable String username){
         try {
-            journalEntryService.saveEntry(journalEntry);
+            journalEntryService.saveEntry(journalEntry,username);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         catch(Exception e){
@@ -49,12 +52,13 @@ public class JournalEntryControllerV2 {
         }
     }
 
-    @DeleteMapping("/id/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable ObjectId id){
+    @DeleteMapping("/id/{username}/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable ObjectId id,@PathVariable String username){
         try {
             Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
-            if(journalEntry.isPresent()) {
-                journalEntryService.deleteById(id);
+            Optional<User> user = Optional.ofNullable(userService.findByUsername(username));
+            if(journalEntry.isPresent() && user.isPresent()) {
+                journalEntryService.deleteById(id,username);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
             else{

@@ -2,6 +2,7 @@ package com.anindo.journalapp.entity;
 
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import org.bson.types.ObjectId;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Document(collection = "journal_entries")
 @Getter
 @Setter
+@NoArgsConstructor
 public class JournalEntry {
     @Id
     private ObjectId id;

@@ -8,10 +8,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.validation.beanvalidation.SpringConstraintValidatorFactory;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Document(collection = "users")

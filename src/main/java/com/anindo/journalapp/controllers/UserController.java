@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -21,6 +22,12 @@ public class UserController {
         List<User> userList = userService.findAll();
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
+    @GetMapping("{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable String username){
+        Optional<User> user = Optional.ofNullable(userService.findByUsername(username));
+        return new ResponseEntity<>(user,HttpStatus.OK);
+    }
+
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user){
