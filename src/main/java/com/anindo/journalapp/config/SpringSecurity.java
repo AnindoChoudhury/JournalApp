@@ -15,10 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 import javax.swing.*;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +34,7 @@ public class SpringSecurity{
 
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/journal/**").authenticated()
+                        .requestMatchers("/journal/**","/user/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());
