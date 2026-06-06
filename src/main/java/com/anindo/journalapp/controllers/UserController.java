@@ -17,24 +17,29 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // Get all users
     @GetMapping
     public ResponseEntity<?> getAll(){
         List<User> userList = userService.findAll();
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
+
+    // Get by username
     @GetMapping("{username}")
     public ResponseEntity<?> getUserByUsername(@PathVariable String username){
         Optional<User> user = Optional.ofNullable(userService.findByUsername(username));
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-
+    // Create a user
+    // Pass username and password in body
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user){
         userService.saveUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // Update user
     @PutMapping("/{username}")
     public ResponseEntity<?> updateUser(@PathVariable String username, @RequestBody User user){
         userService.putUser(username,user.getUsername(),user.getPassword());
