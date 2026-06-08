@@ -48,15 +48,39 @@ public class JournalEntryService {
      }
 
      public Optional<JournalEntry> findById(ObjectId id){
+
          return journalEntryRepository.findById(id);
      }
 
+     @Transactional
      public void deleteById(ObjectId id, String username){
 
+         try {
+             User user = userService.findByUsername(username);
+             boolean removed = user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+             if (removed) {
+                 journalEntryRepository.deleteById(id);
+                 userService.saveUser(user);
+             }
+         }
+         catch(Exception e){
+             System.out.println(e);
+             throw new RuntimeException("error while deleting the journal entry",e);
+         }
+     }
+
+     // The work of this method is to validate whether the journalEntry id provided by the user
+    // belongs to that user and not some other user
+
+     public boolean validateJournalEntry(ObjectId id, String username){
+
          User user = userService.findByUsername(username);
-         user.getJournalEntries().removeIf(x -> x.getId().equals(id));
-         journalEntryRepository.deleteById(id);
-         userService.saveUser(user);
+         if(user != null){
+             // Filter through the journal entries of the user to find the id provided
+             List<JournalEntry> list = user.getJournalEntries().stream().filter(x -> x.getId().equals(id)).toList();
+             return !list.isEmpty();
+         }
+         return false; // just to be syntactically correct
      }
 
      public void putById(ObjectId id, JournalEntry newEntry){

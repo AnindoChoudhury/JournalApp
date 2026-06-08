@@ -12,10 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/journal")
@@ -42,10 +40,14 @@ public class JournalEntryControllerV2 {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getById(@PathVariable ObjectId id){
-        Optional<JournalEntry> journalEntry = journalEntryService.findById(id); // box containing the document
-        if(journalEntry.isPresent()){
-            return new ResponseEntity<>(journalEntry.get(),HttpStatus.OK);
+        String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
+        if (journalEntryService.validateJournalEntry(id,username)) {
+            Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
+            if(journalEntry.isPresent()){
+                return new ResponseEntity<>(journalEntry,HttpStatus.OK);
+            }
         }
+
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -68,8 +70,8 @@ public class JournalEntryControllerV2 {
         try {
             Optional<JournalEntry> journalEntry = journalEntryService.findById(id);
             String username = Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getName();
-            Optional<User> user = Optional.ofNullable(userService.findByUsername(username));
-            if(journalEntry.isPresent() && user.isPresent()) {
+            if(journalEntryService.validateJournalEntry(id,username)) {
+
                 journalEntryService.deleteById(id,username);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
@@ -86,8 +88,14 @@ public class JournalEntryControllerV2 {
     @PutMapping("/id/{id}")
     public ResponseEntity<?> putById(@PathVariable ObjectId id,@RequestBody JournalEntry journalEntry){
         try {
-            journalEntryService.putById(id, journalEntry);
-            return new ResponseEntity<>(HttpStatus.OK);
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            if(journalEntryService.validateJournalEntry(id,username)) {
+                journalEntryService.putById(id, journalEntry);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
         }
         catch(Exception e){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
