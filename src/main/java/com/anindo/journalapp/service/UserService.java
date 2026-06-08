@@ -4,11 +4,16 @@ import com.anindo.journalapp.entity.User;
 import com.anindo.journalapp.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.net.Authenticator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,9 +32,13 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public void saveUser(User user){
+    public void saveNewUser(User user){
         user.setRoles(List.of("USER"));
         user.setPassword(Objects.requireNonNull(passwordEncoder.encode(user.getPassword())));
+        userRepository.save(user);
+    }
+
+    public void saveUser(User user){
         userRepository.save(user);
     }
 
@@ -38,14 +47,26 @@ public class UserService {
         return optionalUser.orElse(null);
     }
 
-    public boolean putUser(String oldUsername, String newUsername, String newPassword){
+    public void putUser(String oldUsername, String newUsername, String newPassword){
         User user = findByUsername(oldUsername);
         if(user != null){
-            user.setUsername(newUsername);
-            user.setPassword(newPassword);
+            if(!oldUsername.equals(newUsername))
+                user.setUsername(newUsername);
+
+            // user.getPassword() is the encoded password from DB
+            // newPassword is the raw password
+            if(!passwordEncoder.matches(newPassword,user.getPassword()))
+                user.setPassword(Objects.requireNonNull(passwordEncoder.encode(newPassword)));
+
             userRepository.save(user);
-            return true;
         }
-        return false;
+
+
+    }
+
+    public void deleteByUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assert authentication != null;
+        userRepository.deleteByUsername(authentication.getName());
     }
 }

@@ -2,6 +2,7 @@ package com.anindo.journalapp.controllers;
 
 import com.anindo.journalapp.entity.User;
 import com.anindo.journalapp.service.UserService;
+import org.bson.json.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +32,6 @@ public class UserController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-    // Create a user
-    // Pass username and password in body
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user){
-        userService.saveUser(user);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
     // Update user
     @PutMapping("/{username}")
@@ -45,4 +39,15 @@ public class UserController {
         userService.putUser(username,user.getUsername(),user.getPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(){
+        try {
+            userService.deleteByUsername();
+            return new ResponseEntity<>("Deleted",HttpStatus.OK);
+        }catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

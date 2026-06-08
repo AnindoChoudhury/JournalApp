@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/public")
+// These are all public endpoint
 public class PublicController {
 
     @Autowired
@@ -20,9 +21,13 @@ public class PublicController {
         return "Ok";
     }
 
+
+    //Create a user
+    //Give username and password in request body
     @PostMapping("create-user")
     public ResponseEntity<?> createUser(@RequestBody User user){
-        userService.saveUser(user);
+        userService.saveNewUser(user);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

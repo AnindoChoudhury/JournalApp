@@ -3,12 +3,14 @@ package com.anindo.journalapp.service;
 import com.anindo.journalapp.entity.JournalEntry;
 import com.anindo.journalapp.entity.User;
 import com.anindo.journalapp.repository.JournalEntryRepository;
+import com.anindo.journalapp.repository.UserRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,8 @@ import java.util.Optional;
 public class JournalEntryService {
      @Autowired
      private JournalEntryRepository journalEntryRepository;
+     @Autowired
+     private UserRepository userRepository;
      @Autowired
      private UserService userService;
      @Transactional
@@ -35,8 +39,12 @@ public class JournalEntryService {
          }
      }
 
-     public List<JournalEntry>getAll(){
-         return journalEntryRepository.findAll();
+     public List<JournalEntry>getAll(String username){
+         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
+         if(user.isPresent()){
+             return user.get().getJournalEntries();
+         }
+         return Collections.emptyList();
      }
 
      public Optional<JournalEntry> findById(ObjectId id){
