@@ -33,9 +33,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public void saveNewUser(User user){
-        user.setRoles(List.of("USER"));
-        user.setPassword(Objects.requireNonNull(passwordEncoder.encode(user.getPassword())));
-        userRepository.save(user);
+        try {
+            user.setRoles(List.of("USER"));
+            user.setPassword(Objects.requireNonNull(passwordEncoder.encode(user.getPassword())));
+            userRepository.save(user);
+        }catch(Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     public void saveUser(User user){
@@ -68,5 +72,11 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assert authentication != null;
         userRepository.deleteByUsername(authentication.getName());
+    }
+
+    public void newAdmin(User user){
+        user.setRoles(List.of("USER", "ADMIN"));
+        user.setPassword(Objects.requireNonNull(passwordEncoder.encode(user.getPassword())));
+        userRepository.save(user);
     }
 }

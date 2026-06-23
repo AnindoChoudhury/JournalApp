@@ -26,8 +26,14 @@ public class PublicController {
     //Give username and password in request body
     @PostMapping("create-user")
     public ResponseEntity<?> createUser(@RequestBody User user){
-        userService.saveNewUser(user);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            userService.saveNewUser(user);
+            return new ResponseEntity<>("User created", HttpStatus.OK);
+        }
+        catch(Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>("Error in creating user", HttpStatus.BAD_REQUEST);
+        }
     }
 
 }
