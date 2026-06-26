@@ -2,7 +2,6 @@ package com.anindo.journalapp.service;
 
 import com.anindo.journalapp.response.TemperatureResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,8 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class WeatherService {
-    @Value("${weather.service.api}")
-    private String apikey;
+    private static final String apikey = "a04b82bf0d7bdada8e7fc2d37a1da91c";
 
     private static final String API = "http://api.weatherstack.com/current?access_key=API_KEY&query=CITY";
 

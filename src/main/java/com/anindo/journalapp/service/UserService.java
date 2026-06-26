@@ -13,14 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.net.Authenticator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 @Slf4j
-@Service
+@Component
 public class UserService {
     @Autowired
     private UserRepository userRepository;
