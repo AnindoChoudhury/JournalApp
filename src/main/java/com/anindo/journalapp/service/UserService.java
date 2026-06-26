@@ -2,6 +2,7 @@ package com.anindo.journalapp.service;
 
 import com.anindo.journalapp.entity.User;
 import com.anindo.journalapp.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.net.Authenticator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+@Slf4j
 @Component
 public class UserService {
     @Autowired
@@ -38,6 +40,9 @@ public class UserService {
             user.setPassword(Objects.requireNonNull(passwordEncoder.encode(user.getPassword())));
             userRepository.save(user);
         }catch(Exception e){
+            log.info("It is info");
+            log.error("It is error");
+            log.warn("It is warn");
             throw new RuntimeException(e);
         }
     }

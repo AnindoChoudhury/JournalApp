@@ -1,15 +1,20 @@
 package com.anindo.journalapp.controllers;
 
 import com.anindo.journalapp.entity.User;
+import com.anindo.journalapp.response.QuoteResponse;
+import com.anindo.journalapp.response.TemperatureResponse;
+import com.anindo.journalapp.service.QuoteService;
 import com.anindo.journalapp.service.UserService;
-import org.bson.json.JsonObject;
+import com.anindo.journalapp.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/user")
@@ -17,26 +22,17 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    // Get all users
-    @GetMapping
-    public ResponseEntity<?> getAll(){
-        List<User> userList = userService.findAll();
-        return new ResponseEntity<>(userList, HttpStatus.OK);
-    }
-
-    // Get by username
-    @GetMapping("{username}")
-    public ResponseEntity<?> getUserByUsername(@PathVariable String username){
-        Optional<User> user = Optional.ofNullable(userService.findByUsername(username));
-        return new ResponseEntity<>(user,HttpStatus.OK);
-    }
-
+    @Autowired
+    private WeatherService weatherService;
+    @Autowired
+    private QuoteService quoteService;
 
     // Update user
-    @PutMapping("/{username}")
-    public ResponseEntity<?> updateUser(@PathVariable String username, @RequestBody User user){
-        userService.putUser(username,user.getUsername(),user.getPassword());
+    @PutMapping
+    public ResponseEntity<?> updateUser(@RequestBody User user){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        assert authentication != null;
+        userService.putUser(authentication.getName(),user.getUsername(),user.getPassword());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -50,4 +46,24 @@ public class UserController {
         }
     }
 
+    @GetMapping
+    public ResponseEntity<?> greetings(){
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            assert auth != null;
+            TemperatureResponse temperatureResponse = weatherService.getWeather("Kolkata");
+            QuoteResponse quoteResponse = quoteService.callQuoteAPI();
+
+            String author = quoteResponse.getAuthor().getName();
+            String quote = quoteResponse.getQuote();
+
+            String temperatureStr = " The temperature feels like " + temperatureResponse.getCurrent().getTemperature();
+
+            String quoteOfTheDay = "\n" +  quote + "\n-" + author;
+
+            return new ResponseEntity<>("hello " + auth.getName() + temperatureStr + quoteOfTheDay, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

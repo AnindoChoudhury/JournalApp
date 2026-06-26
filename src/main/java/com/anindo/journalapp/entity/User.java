@@ -1,8 +1,6 @@
 package com.anindo.journalapp.entity;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "users")
-@Getter
-@Setter
+@Data
+@Builder
 public class User {
     @Id
     private ObjectId id;
