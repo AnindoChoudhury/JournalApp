@@ -1,5 +1,6 @@
 package com.anindo.journalapp.controllers;
 
+import com.anindo.journalapp.cache.AppCache;
 import com.anindo.journalapp.entity.User;
 import com.anindo.journalapp.service.UserService;
 import org.apache.coyote.Response;
@@ -18,6 +19,8 @@ public class AdminController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AppCache appCache;
     @GetMapping("/all-users")
     public ResponseEntity<?> findAllUsers() {
         try {
@@ -40,6 +43,17 @@ public class AdminController {
         }
         catch(Exception e){
             throw new RuntimeException("Problem occurred while creating admin", e);
+        }
+    }
+
+    @GetMapping("/clear-app-cache")
+    public ResponseEntity<?> clearCache(){
+        try {
+            appCache.init();
+            return new ResponseEntity<>("Cleared cache", HttpStatus.OK);
+        }
+        catch(Exception e){
+            throw new RuntimeException(e);
         }
     }
 }

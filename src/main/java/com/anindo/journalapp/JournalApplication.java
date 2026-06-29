@@ -14,8 +14,6 @@ import org.springframework.web.client.RestTemplate;
 public class JournalApplication {
 
     public static void main(String[] args) {
-        System.out.println("!!!!!! IF YOU DO NOT SEE THIS, THE CODE IS NOT COMPILING !!!!!!");
-        System.setProperty("spring.data.mongodb.uri", "mongodb+srv://anindochoudhury2004_db_user:anindo@cluster0.dwiubed.mongodb.net/journal_db?appName=Cluster0");
         SpringApplication.run(JournalApplication.class, args);
     }
 

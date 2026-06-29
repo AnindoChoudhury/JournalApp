@@ -2,11 +2,14 @@ package com.anindo.journalapp.controllers;
 
 
 import com.anindo.journalapp.entity.User;
+import com.anindo.journalapp.repository.UserRepositoryImp;
 import com.anindo.journalapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/public")
@@ -16,9 +19,14 @@ public class PublicController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepositoryImp userRepositoryImp;
+
     @GetMapping("/health-check")
-    public String healthCheck(){
-        return "Ok";
+    public ResponseEntity<?> healthCheck(){
+        List<User> l = userRepositoryImp.getUsersForSA();
+        System.out.println(l);
+        return new ResponseEntity<>(l.toString(), HttpStatus.OK);
     }
 
 
